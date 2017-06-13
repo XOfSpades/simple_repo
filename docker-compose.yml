@@ -1,0 +1,36 @@
+version: '2'
+services:
+
+################################################################################
+########################## test related containers #############################
+################################################################################
+
+  simple-repo-postgres-test-s:
+    image: postgres:9.6.2
+    container_name: simple-repo-postgres-test-c
+    env_file:
+      - ./env_lists/env_test.list
+    volumes:
+      - simple-repo-postgres-data-test-v:/var/lib/postgresql/data
+    networks:
+      - "simple-repo-n"
+
+  simple-repo-test-s:
+    image: simple-repo-test-s:test0.1.0
+    container_name: simple-repo-test-c
+    build:
+      dockerfile: Dockerfile-test
+      context: .
+    command: mix do ecto.drop, ecto.create, ecto.migrate, coveralls
+    environment:
+      - MIX_ENV=test
+    depends_on:
+      - simple-repo-postgres-test-s
+    networks:
+      - "simple-repo-n"
+
+volumes:
+  simple-repo-postgres-data-test-v :
+
+networks:
+  simple-repo-n:

@@ -1,0 +1,34 @@
+FROM bitwalker/alpine-elixir:1.4.2
+
+MAINTAINER bernhard.stoecker@recogizer.de
+
+RUN apk add --update bash && apk add make && rm -rf /var/cache/apk/*
+
+EXPOSE 8080
+
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+RUN mkdir /simple_repo
+
+WORKDIR /simple_repo
+
+RUN mkdir /simple_repo/_build
+RUN mkdir -p /simple_repo/config
+RUN mkdir /simple_repo/lib
+
+COPY version /simple_repo/version
+COPY mix.exs /simple_repo/mix.exs
+COPY mix.lock /simple_repo/mix.lock
+
+RUN MIX_ENV=test mix do deps.get, deps.compile
+
+COPY config/config.exs /simple_repo/config/config.exs
+COPY config/test.exs /simple_repo/config/test.exs
+
+COPY priv /simple_repo/priv
+
+COPY lib /simple_repo/lib
+COPY test /simple_repo/test
+
+RUN MIX_ENV=test mix compile
