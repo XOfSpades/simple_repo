@@ -11,7 +11,6 @@ IO.puts(
   "                  |_|                           |_|                       |_|                                             |___/                         \n"
 )
 
-repo = Application.get_env(:simple_repo, :repo)[:module_name]
-repo.start_link()
+SimpleRepo.Support.Repo.start_link()
 
-Ecto.Adapters.SQL.Sandbox.mode(repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(SimpleRepo.Support.Repo, :manual)

@@ -1,10 +1,8 @@
 defmodule SimpleRepo.RepositoryTest do
   use ExUnit.Case, async: true
   use SimpleRepo.Support.RepoCase
-  alias SimpleRepo.Repository
+  alias SimpleRepo.Support.TestRepository, as: Repository
   alias SimpleRepo.Support.TestStruct
-
-  @repo Application.get_env(:simple_repo, :repo)[:module_name]
 
   setup do
     structs = SimpleRepo.Support.Fixtures.test_structs
@@ -28,7 +26,6 @@ defmodule SimpleRepo.RepositoryTest do
 
     test "doesn't write data when invalid and returns an error tuple" do
       params = %{name: "Hula", value: 42}
-      struct = %TestStruct{name: "Hula", value: 42}
 
       {:error, msg} = Repository.save(%TestStruct{}, params)
 
@@ -124,13 +121,13 @@ defmodule SimpleRepo.RepositoryTest do
     test "deletes an item", %{structs: structs} do
       [item|_] = structs
       Repository.delete(TestStruct, item.id)
-      refute @repo.get(TestStruct, item.id)
+      refute SimpleRepo.Support.Repo.get(TestStruct, item.id)
     end
 
     test "does not delete when item is not in scope", %{structs: structs} do
       [item|_] = structs
       Repository.delete(TestStruct, item.id, type: :foobar)
-      assert @repo.get(TestStruct, item.id)
+      assert SimpleRepo.Support.Repo.get(TestStruct, item.id)
     end
   end
 

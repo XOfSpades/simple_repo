@@ -12,9 +12,6 @@ config :simple_repo, SimpleRepo.Support.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
-config :simple_repo, :repo,
-  module_name: SimpleRepo.Support.Repo
-
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, level: :warn, format: "[$level] $message\n"
 
