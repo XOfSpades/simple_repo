@@ -1,11 +1,20 @@
 defmodule SimpleRepo.Repository do
+  @moduledoc """
+  SimpleRepo.Repository provides a macro enabling you to create simple database
+  interactions. The macro can be used by providing it the Ecto.Repo module:
+
+  defmodule MyRepository do\n
+      use SimpleRepo.Repository, repo: MyRepo\n
+  end
+
+  The following functions are available: \n
+    save/2, get/3, all/2, update/4, delete/3, aggregate/4
+  """
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
       import Ecto.Query
 
       @repo Keyword.get(opts, :repo)
-
-      #@repo Application.get_env(:simple_repo, :repo)[:module_name]
 
       def save(struct, params) do
         struct
@@ -57,7 +66,9 @@ defmodule SimpleRepo.Repository do
       end
 
       defp scoped(model, scopes) do
-        Enum.reduce(scopes, model, fn(scope, acc) -> acc |> scope_query(scope) end)
+        Enum.reduce(
+          scopes, model, fn(scope, acc) -> acc |> scope_query(scope) end
+        )
       end
 
       defp scope_query(model, {key, nil}) do
