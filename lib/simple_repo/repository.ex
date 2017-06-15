@@ -1,8 +1,3 @@
-# Copyright (C) Recogizer Group GmbH - All Rights Reserved
-# Unauthorized copying of this file, via any medium is strictly prohibited
-# Proprietary and confidential
-# Created on 2017-02-02 14:05:13.
-
 defmodule SimpleRepo.Repository do
   require Logger
   import Ecto.Query

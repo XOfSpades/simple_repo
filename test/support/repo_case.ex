@@ -1,8 +1,3 @@
-# Copyright (C) Recogizer Group GmbH - All Rights Reserved
-# Unauthorized copying of this file, via any medium is strictly prohibited
-# Proprietary and confidential
-# Created on 2017-02-02 13:49:20.
-
 defmodule SimpleRepo.Support.RepoCase do
   @moduledoc """
   This module defines the test case to be used by
