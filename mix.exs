@@ -2,10 +2,7 @@ defmodule SimpleRepo.Mixfile do
   use Mix.Project
 
   def project do
-    version = File.stream!("version", [], :line)
-    |> Enum.take(1)
-    |> Enum.join("")
-    |> String.replace("\n", "")
+    version = "0.1.0"
     [app: :simple_repo,
      version: version,
      elixir: "~> 1.4",
