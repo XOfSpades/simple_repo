@@ -14,6 +14,32 @@ end
 defmodule MyApp.Repository do
     use SimpleRepo.Repository, repo: MyApp.Repo
 end
+
+# Create a schema and have a def changeset/2 function in place. This is a required convention to make this library work.
+defmodule MyApp.User do
+  use Ecto.Schema
+
+  schema "users" do
+    field :name,  :string
+    field :org,  :string
+    field :first_name, :string
+    field :last_name, :integer
+
+    timestamps()
+  end
+
+  def changeset(model, params) do
+    fields = ~w(org email first_name last_name)
+
+    model
+    |> Ecto.Changeset.cast(params, fields)
+    |> Ecto.Changeset.validate_required(:org)
+    |> Ecto.Changeset.validate_required(:email)
+    |> Ecto.Changeset.validate_required(:first_name)
+    |> Ecto.Changeset.validate_required(:last_name)
+  end
+end
+
 ```
 
 With this setup you can use it as follows.
