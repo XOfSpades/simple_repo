@@ -26,7 +26,7 @@ RUN MIX_ENV=test mix do deps.get, deps.compile
 COPY config/config.exs /simple_repo/config/config.exs
 COPY config/test.exs /simple_repo/config/test.exs
 
-COPY priv /simple_repo/priv
+COPY test/support/priv /simple_repo/priv
 
 COPY lib /simple_repo/lib
 COPY test /simple_repo/test
