@@ -10,6 +10,8 @@ defmodule SimpleRepo.Mixfile do
      version: version,
      elixir: "~> 1.4",
      elixirc_paths: elixirc_paths(Mix.env),
+     description: "A wrapper around Ecto to simplify queries",
+     package: package(),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      test_coverage: [tool: ExCoveralls],
@@ -26,6 +28,14 @@ defmodule SimpleRepo.Mixfile do
 
   defp elixirc_paths(:prod), do: ["lib"]
   defp elixirc_paths(_),     do: ["lib",  "test/support"]
+
+  defp package do
+    [
+      maintainers: ["Bernhard Støcker"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/xofspades/simple_repo"}
+    ]
+  end
 
   # Dependencies can be Hex packages:
   #
