@@ -84,6 +84,9 @@ defmodule SimpleRepo.Repository do
       defp scope_query(model, {key, values}) when is_list(values) do
         model |> where([m], field(m, ^key) in ^values)
       end
+      defp scope_query(model, {key, {:not, values}}) when is_list(values) do
+        model |> where([m], not field(m, ^key) in ^values)
+      end
 
       defp entity_result(response) do
         case response do

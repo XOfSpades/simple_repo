@@ -140,4 +140,22 @@ defmodule SimpleRepo.RepositoryTest do
       assert 3 == Repository.aggregate(TestStruct, :count, :id, type: :foo)
     end
   end
+
+  describe "other queries" do
+    test "scopes to items not included in a list", %{structs: structs} do
+      results = Repository.all(TestStruct, [type: {:not, ["foo", "bar"]}])
+      assert length(results) == 2
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> x.type == "baz" end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+  end
 end
