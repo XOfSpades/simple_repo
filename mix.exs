@@ -45,8 +45,8 @@ defmodule SimpleRepo.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:postgrex, "~> 0.13.0"},
-      {:ecto, "~> 2.1.3"},
+      {:postgrex, "~> 0.13"},
+      {:ecto, "~> 2.1"},
       {:excoveralls, "~> 0.6.3", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
