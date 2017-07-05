@@ -1,4 +1,8 @@
 defmodule SimpleRepo.Support.Fixtures do
+    @moduledoc """
+  Only used for testing purpose.
+  """
+
   alias SimpleRepo.Support.TestStruct
   alias SimpleRepo.Support.Repo
 

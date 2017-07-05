@@ -1,4 +1,7 @@
 defmodule SimpleRepo.Support.TestStruct do
+  @moduledoc """
+  Only used for testing purpose.
+  """
   use Ecto.Schema
 
   schema "test_structs" do
