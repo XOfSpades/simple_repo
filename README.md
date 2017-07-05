@@ -1,5 +1,7 @@
 # SimpleRepo
 
+[![Hex Version](https://img.shields.io/hexpm/v/simple_repo.svg?style=flat-square)](https://hex.pm/packages/simple_repo)
+
 This is a library enabling you to create a simple way to query for data using simple data structures like keyword lists.
 
 ## Usage
