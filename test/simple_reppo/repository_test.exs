@@ -142,6 +142,38 @@ defmodule SimpleRepo.RepositoryTest do
   end
 
   describe "other queries" do
+    test "scopes to items not equal to value", %{structs: structs} do
+      results = Repository.all(TestStruct, [type: {:not, "foo"}])
+      assert length(results) == 4
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> x.type != "foo" end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
+    test "scopes to items with non-nil field", %{structs: structs} do
+      results = Repository.all(TestStruct, [value: {:not, nil}])
+      assert length(results) == 6
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> x.value end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
     test "scopes to items not included in a list", %{structs: structs} do
       results = Repository.all(TestStruct, [type: {:not, ["foo", "bar"]}])
       assert length(results) == 2

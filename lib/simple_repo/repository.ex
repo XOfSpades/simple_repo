@@ -84,6 +84,13 @@ defmodule SimpleRepo.Repository do
       defp scope_query(model, {key, values}) when is_list(values) do
         model |> where([m], field(m, ^key) in ^values)
       end
+      defp scope_query(model, {key, {:not, nil}}) do
+        from m in model, where: not is_nil(field(m, ^key))
+      end
+      defp scope_query(model, {key, {:not, value}})
+           when is_binary(value) or is_integer(value) do
+        scope_query(model, {key, {:not, [value]}}) # maybe better solution?
+      end
       defp scope_query(model, {key, {:not, values}}) when is_list(values) do
         model |> where([m], not field(m, ^key) in ^values)
       end
