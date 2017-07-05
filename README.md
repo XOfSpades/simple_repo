@@ -1,6 +1,6 @@
 # SimpleRepo
 
-[![Hex Version](https://img.shields.io/hexpm/v/simple_repo.svg?style=flat-square)](https://hex.pm/packages/simple_repo)
+[![Hex Version](https://img.shields.io/hexpm/v/simple_repo.svg?style=flat-square)](https://hex.pm/packages/simple_repo) [![Docs](https://img.shields.io/badge/api-docs-orange.svg?style=flat-square)](https://hexdocs.pm/simple_repo) [![Hex downloads](https://img.shields.io/hexpm/dt/simple_repo.svg?style=flat-square)](https://hex.pm/packages/simple_repo) [![GitHub](https://img.shields.io/badge/vcs-GitHub-blue.svg?style=flat-square)](https://github.com/ertgl/simple_repo) [![MIT License](https://img.shields.io/hexpm/l/simple_repo.svg?style=flat-square)](LICENSE.txt)
 
 This is a library enabling you to create a simple way to query for data using simple data structures like keyword lists.
 
