@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir:1.4.2
+FROM bitwalker/alpine-elixir:1.4.5
 
 MAINTAINER bernhard.stoecker@recogizer.de
 
@@ -17,7 +17,6 @@ RUN mkdir /simple_repo/_build
 RUN mkdir -p /simple_repo/config
 RUN mkdir /simple_repo/lib
 
-COPY version /simple_repo/version
 COPY mix.exs /simple_repo/mix.exs
 COPY mix.lock /simple_repo/mix.lock
 
