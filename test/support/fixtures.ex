@@ -1,5 +1,5 @@
 defmodule SimpleRepo.Support.Fixtures do
-    @moduledoc """
+  @moduledoc """
   Only used for testing purpose.
   """
 
