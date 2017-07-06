@@ -15,7 +15,7 @@ defmodule SimpleRepo.Support.Fixtures do
       %TestStruct{name: "S5", type: "bar", value: 5},
       %TestStruct{name: "S6", type: "baz", value: 6},
       %TestStruct{name: "S7", type: "baz", value: nil}
-    ] |> Enum.map(&(Repo.insert!(&1)))
+    ] |> Enum.map(&Repo.insert!/1)
     Repo.all(TestStruct)
   end
 end
