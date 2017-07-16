@@ -53,8 +53,8 @@ MyApp.Repository.save((%MyApp.User{}, %{email: "foo@bar.com", first_name: "John"
 # When invalid:
 # => {:error, changeset}
 
-# UPDATE
-MyApp.Repository.update(MyApp.User, 42, %{org: "Baz Ltd"})
+# REVISE (for updates)
+MyApp.Repository.revise(MyApp.User, 42, %{org: "Baz Ltd"})
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}}
 # When invalid:
 # => {:error, changeset}
@@ -62,33 +62,33 @@ MyApp.Repository.update(MyApp.User, 42, %{org: "Baz Ltd"})
 # => {:error, :not_found}
 
 # For update scoping to a specified search space is possible:
-MyApp.Repository.update(MyApp.User, 42, %{org: "Baz Ltd"}, [org: "Foobar Ltd"])
+MyApp.Repository.revise(MyApp.User, 42, %{org: "Baz Ltd"}, [org: "Foobar Ltd"])
 # Returns {:error, :not found} if no user with id = 42 and org = "Foobar Ltd"} exists
 
-# GET
-MyApp.Repository.get(MyApp.User, 42)
+# ONE (to get a single element)
+MyApp.Repository.one(MyApp.User, 42)
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
 # When id does not exist:
 # => {:error, :not_found}
 
 # For get scoping to a specified search space is possible:
-MyApp.Repository.update(MyApp.User, 42, [org: "Foobar Ltd"])
+MyApp.Repository.one(MyApp.User, 42, [org: "Foobar Ltd"])
 # Returns {:error, :not found} if no user with id = 42 and org = "Foobar Ltd"} exists
 
 # ALL
 MyApp.Repository.all(MyApp.User)
 # => [%MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}, ...]
 # Again scoping to a specified search space is possible:
-MyApp.Repository.update(MyApp.User, [org: "Foobar Ltd"])
+MyApp.Repository.all(MyApp.User, [org: "Foobar Ltd"])
 
-# DELETE
-MyApp.Repository.delete(MyApp, 42)
+# DESTROY
+MyApp.Repository.destroy(MyApp, 42)
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
 # When no such item exists:
 # => {:error, :not_found}
 
 # Again scoping to a smaller search space is possible:
-MyApp.Repository.delete(MyApp, 42, [org: "Foobar Ltd"])
+MyApp.Repository.destroy(MyApp, 42, [org: "Foobar Ltd"])
 
 # AGGREGATE
 MyApp.Repository.aggregate(MyApp, :count, :id)
