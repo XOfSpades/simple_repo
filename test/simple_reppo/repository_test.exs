@@ -34,11 +34,11 @@ defmodule SimpleRepo.RepositoryTest do
     end
   end
 
-  describe ".update" do
+  describe ".revise" do
     test "updates an item", %{structs: structs} do
       [item|_] = structs
       {:ok, updated_item} =
-        Repository.update(TestStruct, item.id, %{name: "Hulahupp"})
+        Repository.revise(TestStruct, item.id, %{name: "Hulahupp"})
 
       assert updated_item.name == "Hulahupp"
       assert updated_item.type == item.type
@@ -50,7 +50,7 @@ defmodule SimpleRepo.RepositoryTest do
     test "does not update when change is invalid", %{structs: structs} do
       [item|_] = structs
       {:error, msg} =
-        Repository.update(TestStruct, item.id, %{name: nil})
+        Repository.revise(TestStruct, item.id, %{name: nil})
 
       assert msg
 
@@ -59,28 +59,28 @@ defmodule SimpleRepo.RepositoryTest do
 
     test "returns not found when no such item exists}", %{structs: structs} do
       unknown_id = Enum.max_by(structs, &(&1.id)).id + 1
-      result = Repository.update(TestStruct, unknown_id, %{name: "Hulahupp"})
+      result = Repository.revise(TestStruct, unknown_id, %{name: "Hulahupp"})
 
       assert {:error, :not_found} = result
     end
   end
 
-  describe ".get" do
+  describe ".one" do
     test "returns the item", %{structs: structs} do
       [item|_] = structs
-      assert {:ok, item} == Repository.get(TestStruct, item.id)
+      assert {:ok, item} == Repository.one(TestStruct, item.id)
     end
 
     test "returns no item if the id does not match the scope",
          %{structs: structs} do
       [item|_] = structs
-      result = Repository.get(TestStruct, item.id, type: "foobar")
+      result = Repository.one(TestStruct, item.id, type: "foobar")
       assert {:error, :not_found} == result
     end
 
     test "returns no item if the id does not exist", %{structs: structs} do
       unknown_id = Enum.max_by(structs, &(&1.id)).id + 1
-      assert Repository.get(TestStruct, unknown_id) == {:error, :not_found}
+      assert Repository.one(TestStruct, unknown_id) == {:error, :not_found}
     end
   end
 
@@ -117,16 +117,16 @@ defmodule SimpleRepo.RepositoryTest do
     end
   end
 
-  describe ".delete" do
+  describe ".destroy" do
     test "deletes an item", %{structs: structs} do
       [item|_] = structs
-      Repository.delete(TestStruct, item.id)
+      Repository.destroy(TestStruct, item.id)
       refute SimpleRepo.Support.Repo.get(TestStruct, item.id)
     end
 
     test "does not delete when item is not in scope", %{structs: structs} do
       [item|_] = structs
-      Repository.delete(TestStruct, item.id, type: :foobar)
+      Repository.destroy(TestStruct, item.id, type: :foobar)
       assert SimpleRepo.Support.Repo.get(TestStruct, item.id)
     end
   end

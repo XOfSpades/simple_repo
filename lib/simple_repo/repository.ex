@@ -8,11 +8,20 @@ defmodule SimpleRepo.Repository do
   end
 
   The following functions are available: \n
-    save/2, get/3, all/2, update/4, delete/3, aggregate/4
+    save/2, one/3, all/2, revise/4, destroy/3, aggregate/4
+
+  You can see the function as a mapping to crud actions:
+  create -> save
+  update -> revise
+  show -> one
+  index -> all
+  delete -> destroy
+
   """
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
       import Ecto.Query
+      require Logger
 
       @repo Keyword.get(opts, :repo)
 
@@ -23,6 +32,12 @@ defmodule SimpleRepo.Repository do
       end
 
       def get(model, id, scope \\ []) when is_binary(id) or is_integer(id) do
+        Logger.warn("SimpleRepo.Repository.get is depricated. " <>
+                    "Use SimpleRepo.Repository.one instead")
+        one(model, id, scope)
+      end
+
+      def one(model, id, scope \\ []) when is_binary(id) or is_integer(id) do
         model
         |> scoped(scope)
         |> @repo.get(id)
@@ -35,9 +50,9 @@ defmodule SimpleRepo.Repository do
         |> @repo.all()
       end
 
-      def update(model, id, params, scope \\ []) do
+      def revise(model, id, params, scope \\ []) do
         {_transaction_status, {status, response}} = @repo.transaction fn ->
-          case get(model, id, scope) do
+          case one(model, id, scope) do
             {:error, :not_found} -> not_found()
             {:ok, entity} ->
               entity
@@ -48,14 +63,26 @@ defmodule SimpleRepo.Repository do
         {status, response}
       end
 
-      def delete(model, id, scope \\ []) do
+      def update(model, id, params, scope \\ []) do
+        Logger.warn("SimpleRepo.Repository.update is depricated. " <>
+                    "Use SimpleRepo.Repository.revise instead")
+        revise(model, id, params, scope)
+      end
+
+      def destroy(model, id, scope \\ []) do
         {_transaction_status, {status, response}} = @repo.transaction fn ->
-          case get(model, id, scope) do
+          case one(model, id, scope) do
             {:error, :not_found} -> not_found()
             {:ok, entity} -> @repo.delete(entity)
           end
         end
         {status, response}
+      end
+
+      def delete(model, id, scope \\ []) do
+        Logger.warn("SimpleRepo.Repository.delete is depricated. " <>
+                    "Use SimpleRepo.Repository.destroy instead")
+        destroy(model, id, scope)
       end
 
       # aggretagtion_types: [:avg, :count, :max, :min, :sum]
