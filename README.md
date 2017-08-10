@@ -54,7 +54,7 @@ MyApp.Repository.save((%MyApp.User{}, %{email: "foo@bar.com", first_name: "John"
 # => {:error, changeset}
 
 # REVISE (for updates)
-MyApp.Repository.revise(MyApp.User, 42, %{org: "Baz Ltd"})
+MyApp.Repository.patch(MyApp.User, 42, %{org: "Baz Ltd"})
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}}
 # When invalid:
 # => {:error, changeset}
@@ -62,7 +62,7 @@ MyApp.Repository.revise(MyApp.User, 42, %{org: "Baz Ltd"})
 # => {:error, :not_found}
 
 # For update scoping to a specified search space is possible:
-MyApp.Repository.revise(MyApp.User, 42, %{org: "Baz Ltd"}, [org: "Foobar Ltd"])
+MyApp.Repository.patch(MyApp.User, 42, %{org: "Baz Ltd"}, [org: "Foobar Ltd"])
 # Returns {:error, :not found} if no user with id = 42 and org = "Foobar Ltd"} exists
 
 # ONE (to get a single element)

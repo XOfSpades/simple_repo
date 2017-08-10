@@ -8,11 +8,11 @@ defmodule SimpleRepo.Repository do
   end
 
   The following functions are available: \n
-    save/2, one/3, all/2, revise/4, destroy/3, aggregate/4
+    save/2, one/3, all/2, patch/4, destroy/3, aggregate/4
 
   You can see the function as a mapping to crud actions:
   create -> save
-  update -> revise
+  update -> patch
   show -> one
   index -> all
   delete -> destroy
@@ -51,6 +51,12 @@ defmodule SimpleRepo.Repository do
       end
 
       def revise(model, id, params, scope \\ []) do
+        Logger.warn("SimpleRepo.Repository.revise is depricated. " <>
+                    "Use SimpleRepo.Repository.patch instead")
+        patch(model, id, params, scope)
+      end
+
+      def patch(model, id, params, scope \\ []) do
         {_transaction_status, {status, response}} = @repo.transaction fn ->
           case one(model, id, scope) do
             {:error, :not_found} -> not_found()
@@ -65,8 +71,8 @@ defmodule SimpleRepo.Repository do
 
       def update(model, id, params, scope \\ []) do
         Logger.warn("SimpleRepo.Repository.update is depricated. " <>
-                    "Use SimpleRepo.Repository.revise instead")
-        revise(model, id, params, scope)
+                    "Use SimpleRepo.Repository.patch instead")
+        patch(model, id, params, scope)
       end
 
       def destroy(model, id, scope \\ []) do

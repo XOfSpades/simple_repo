@@ -34,11 +34,11 @@ defmodule SimpleRepo.RepositoryTest do
     end
   end
 
-  describe ".revise" do
+  describe ".patch" do
     test "updates an item", %{structs: structs} do
       [item|_] = structs
       {:ok, updated_item} =
-        Repository.revise(TestStruct, item.id, %{name: "Hulahupp"})
+        Repository.patch(TestStruct, item.id, %{name: "Hulahupp"})
 
       assert updated_item.name == "Hulahupp"
       assert updated_item.type == item.type
@@ -50,7 +50,7 @@ defmodule SimpleRepo.RepositoryTest do
     test "does not update when change is invalid", %{structs: structs} do
       [item|_] = structs
       {:error, msg} =
-        Repository.revise(TestStruct, item.id, %{name: nil})
+        Repository.patch(TestStruct, item.id, %{name: nil})
 
       assert msg
 
@@ -59,7 +59,7 @@ defmodule SimpleRepo.RepositoryTest do
 
     test "returns not found when no such item exists}", %{structs: structs} do
       unknown_id = Enum.max_by(structs, &(&1.id)).id + 1
-      result = Repository.revise(TestStruct, unknown_id, %{name: "Hulahupp"})
+      result = Repository.patch(TestStruct, unknown_id, %{name: "Hulahupp"})
 
       assert {:error, :not_found} = result
     end
