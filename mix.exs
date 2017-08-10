@@ -2,7 +2,7 @@ defmodule SimpleRepo.Mixfile do
   use Mix.Project
 
   def project do
-    version = "0.1.2"
+    version = "0.1.3"
     [app: :simple_repo,
      version: version,
      elixir: "~> 1.5",
