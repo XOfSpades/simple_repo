@@ -5,7 +5,7 @@ defmodule SimpleRepo.Mixfile do
     version = "0.1.2"
     [app: :simple_repo,
      version: version,
-     elixir: "~> 1.4",
+     elixir: "~> 1.5",
      elixirc_paths: elixirc_paths(Mix.env),
      description: "A wrapper around Ecto to simplify queries",
      package: package(),
