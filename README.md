@@ -22,8 +22,8 @@ defmodule MyApp.User do
   use Ecto.Schema
 
   schema "users" do
-    field :name,  :string
     field :org,  :string
+    field :email :string
     field :first_name, :string
     field :last_name, :integer
 
@@ -96,6 +96,34 @@ MyApp.Repository.aggregate(MyApp, :count, :id)
 # Also here scoping is possible
 MyApp.Repository.aggregate(MyApp, :count, :id, [org: "Foobar Ltd"])
 # possible aggregations: [:avg, :count, :max, :min, :sum]
+```
+
+There are different ways to add scopes/queries. Here are some examples:
+```elixir
+MyApp.Repository.all(MyApp.User, [:last_name, "Smith"])
+# Query for all users with last_name 'Smith'
+
+MyApp.Repository.all(MyApp.User, [:last_name, {:not, "Smith"}])
+# Query for all users not having last_name 'Smith'
+
+MyApp.Repository.all(MyApp.User, [:org, nil])
+# Query for all users not belonging to an org (The library handles the NULL case for you)
+
+MyApp.Repository.all(MyApp.User, [:org, {:not, nil}])
+# Query for all users belonging to an org.
+
+MyApp.Repository.all(MyApp.User, [:first_name, ["Kevin", "Hugo", "James"]])
+# Query for all users either having 'Kevin', 'Hugo' or 'James' as first_name)
+
+MyApp.Repository.all(MyApp.User, [:first_name, {:not, ["Kevin", "Hugo", "James"]}])
+# Query for all users NOT having 'Kevin', 'Hugo' or 'James' as first_name)
+
+MyApp.Repository.all(MyApp.User, [:email, {:like, "@gmail."}])
+# Scope to all email addresses containing '@gmail.'
+
+MyApp.Repository.all(MyApp.User, [:email, {:not_like, "@gmail."}])
+# Scope to all email addresses NOT containing '@gmail.'
+
 ```
 
 **TODOs:**

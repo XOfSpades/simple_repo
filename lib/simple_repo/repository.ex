@@ -128,11 +128,9 @@ defmodule SimpleRepo.Repository do
         model |> where([m], not field(m, ^key) in ^values)
       end
       defp scope_query(model, {key, {:like, pattern}}) do
-        # from m in model, where: like(u.username, ^username)
         from m in model, where: like(field(m, ^key), ^"%#{pattern}%")
       end
       defp scope_query(model, {key, {:not_like, pattern}}) do
-        # from m in model, where: like(u.username, ^username)
         from m in model, where: not like(field(m, ^key), ^"%#{pattern}%")
       end
 
