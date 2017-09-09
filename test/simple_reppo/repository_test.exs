@@ -189,5 +189,21 @@ defmodule SimpleRepo.RepositoryTest do
         assert Enum.member?(result_data, expected)
       end
     end
+
+    test "matches pattern with like statement", %{structs: structs} do
+      results = Repository.all(TestStruct, [type: {:like, "a"}])
+      assert length(results) == 4
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> x.type == "bar" || x.type == "baz" end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
   end
 end
