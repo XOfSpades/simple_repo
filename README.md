@@ -113,7 +113,7 @@ MyApp.Repository.all(MyApp.User, [:org, {:not, nil}])
 # Query for all users belonging to an org.
 
 MyApp.Repository.all(MyApp.User, [:first_name, ["Kevin", "Hugo", "James"]])
-# Query for all users either having 'Kevin', 'Hugo' or 'James' as first_name)
+# Query for all users either having 'Kevin', 'Hugo' or 'James' as first_name). This is equivalent to the SQL 'WHERE IN'
 
 MyApp.Repository.all(MyApp.User, [:first_name, {:not, ["Kevin", "Hugo", "James"]}])
 # Query for all users NOT having 'Kevin', 'Hugo' or 'James' as first_name)
