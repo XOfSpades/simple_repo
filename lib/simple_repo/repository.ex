@@ -31,12 +31,6 @@ defmodule SimpleRepo.Repository do
         |> @repo.insert
       end
 
-      def get(model, id, scope \\ []) when is_binary(id) or is_integer(id) do
-        Logger.warn("SimpleRepo.Repository.get is depricated. " <>
-                    "Use SimpleRepo.Repository.one instead")
-        one(model, id, scope)
-      end
-
       def one(model, id, scope \\ []) when is_binary(id) or is_integer(id) do
         model
         |> scoped(scope)
@@ -48,12 +42,6 @@ defmodule SimpleRepo.Repository do
         model
         |> scoped(scope)
         |> @repo.all()
-      end
-
-      def revise(model, id, params, scope \\ []) do
-        Logger.warn("SimpleRepo.Repository.revise is depricated. " <>
-                    "Use SimpleRepo.Repository.patch instead")
-        patch(model, id, params, scope)
       end
 
       def patch(model, id, params, scope \\ []) do
@@ -69,12 +57,6 @@ defmodule SimpleRepo.Repository do
         {status, response}
       end
 
-      def update(model, id, params, scope \\ []) do
-        Logger.warn("SimpleRepo.Repository.update is depricated. " <>
-                    "Use SimpleRepo.Repository.patch instead")
-        patch(model, id, params, scope)
-      end
-
       def destroy(model, id, scope \\ []) do
         {_transaction_status, {status, response}} = @repo.transaction fn ->
           case one(model, id, scope) do
@@ -83,12 +65,6 @@ defmodule SimpleRepo.Repository do
           end
         end
         {status, response}
-      end
-
-      def delete(model, id, scope \\ []) do
-        Logger.warn("SimpleRepo.Repository.delete is depricated. " <>
-                    "Use SimpleRepo.Repository.destroy instead")
-        destroy(model, id, scope)
       end
 
       # aggretagtion_types: [:avg, :count, :max, :min, :sum]
