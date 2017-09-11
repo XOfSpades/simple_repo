@@ -47,7 +47,7 @@ defmodule SimpleRepo.Mixfile do
     [
       {:postgrex, "~> 0.13"},
       {:ecto, "~> 2.1"},
-      {:excoveralls, "~> 0.6.3", only: :test},
+      {:excoveralls, "~> 0.7.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
