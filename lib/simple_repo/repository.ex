@@ -22,6 +22,7 @@ defmodule SimpleRepo.Repository do
     quote bind_quoted: [opts: opts] do
       import Ecto.Query
       require Logger
+      import SimpleRepo.Query
 
       @repo Keyword.get(opts, :repo)
 
@@ -72,42 +73,6 @@ defmodule SimpleRepo.Repository do
         model
         |> scoped(scope)
         |> @repo.aggregate(aggregation_type, field)
-      end
-
-      defp scoped(model, scopes) do
-        Enum.reduce(
-          scopes, model, fn(scope, acc) -> acc |> scope_query(scope) end
-        )
-      end
-
-      defp scope_query(model, {key, nil}) do
-        from m in model, where: is_nil(field(m, ^key))
-      end
-      defp scope_query(model, {key, value})
-           when is_binary(value) or is_integer(value) do
-        model |> where(^[{key, value}])
-      end
-      defp scope_query(model, {key, value}) when is_atom(value) do
-        scope_query(model, {key, Atom.to_string(value)})
-      end
-      defp scope_query(model, {key, values}) when is_list(values) do
-        model |> where([m], field(m, ^key) in ^values)
-      end
-      defp scope_query(model, {key, {:not, nil}}) do
-        from m in model, where: not is_nil(field(m, ^key))
-      end
-      defp scope_query(model, {key, {:not, value}})
-           when is_binary(value) or is_integer(value) do
-        scope_query(model, {key, {:not, [value]}}) # maybe better solution?
-      end
-      defp scope_query(model, {key, {:not, values}}) when is_list(values) do
-        model |> where([m], not field(m, ^key) in ^values)
-      end
-      defp scope_query(model, {key, {:like, pattern}}) do
-        from m in model, where: like(field(m, ^key), ^"%#{pattern}%")
-      end
-      defp scope_query(model, {key, {:not_like, pattern}}) do
-        from m in model, where: not like(field(m, ^key), ^"%#{pattern}%")
       end
 
       defp entity_result(response) do
