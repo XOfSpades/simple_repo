@@ -40,4 +40,16 @@ defmodule SimpleRepo.Query do
   defp scope_query(queriable, {key, {:not_like, pattern}}) do
     from m in queriable, where: not like(field(m, ^key), ^"%#{pattern}%")
   end
+  defp scope_query(queriable, {key, {:<, value}}) do
+    queriable |> where([m], field(m, ^key) < ^value)
+  end
+  defp scope_query(queriable, {key, {:<=, value}}) do
+    queriable |> where([m], field(m, ^key) <= ^value)
+  end
+  defp scope_query(queriable, {key, {:>, value}}) do
+    queriable |> where([m], field(m, ^key) > ^value)
+  end
+  defp scope_query(queriable, {key, {:>=, value}}) do
+    queriable |> where([m], field(m, ^key) >= ^value)
+  end
 end

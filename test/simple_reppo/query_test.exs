@@ -176,5 +176,69 @@ defmodule SimpleRepo.QueryTest do
         assert Enum.member?(result_data, expected)
       end
     end
+
+    test "offer a < operator for scopes", %{structs: structs} do
+      results = Query.scoped(TestStruct, [value: {:<, 4}]) |> Repo.all
+      assert length(results) == 3
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value < 4 end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
+    test "offer a <= operator for scopes", %{structs: structs} do
+      results = Query.scoped(TestStruct, [value: {:<=, 3}]) |> Repo.all
+      assert length(results) == 3
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value <= 3 end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
+    test "offer a > operator for scopes", %{structs: structs} do
+      results = Query.scoped(TestStruct, [value: {:>, 3}]) |> Repo.all
+      assert length(results) == 3
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value > 3 end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
+    test "offer a >= operator for scopes", %{structs: structs} do
+      results = Query.scoped(TestStruct, [value: {:>=, 4}]) |> Repo.all
+      assert length(results) == 3
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value >= 4 end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
   end
 end
