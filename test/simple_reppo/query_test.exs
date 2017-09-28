@@ -27,6 +27,22 @@ defmodule SimpleRepo.QueryTest do
       end
     end
 
+    test "allows any kind of tuple enum", %{structs: structs} do
+      results = Query.scoped(TestStruct, [{"type", "foo"}]) |> Repo.all
+      assert length(results) == 3
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> x.type == "foo" end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
     test "scoped to a single nil value", %{structs: structs} do
       results = Query.scoped(TestStruct, [value: nil]) |> Repo.all
       assert length(results) == 1

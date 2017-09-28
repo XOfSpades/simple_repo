@@ -8,6 +8,9 @@ defmodule SimpleRepo.Query do
     )
   end
 
+  defp scope_query(queriable, {key, value}) when is_binary(key) do
+    scope_query(queriable, {String.to_existing_atom(key), value})
+  end
   defp scope_query(queriable, {key, nil}) do
     from m in queriable, where: is_nil(field(m, ^key))
   end
