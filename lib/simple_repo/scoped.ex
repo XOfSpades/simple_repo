@@ -15,6 +15,7 @@ defmodule SimpleRepo.Scoped do
     update_all_scoped/4
     delete_scoped/4,
     delete_all_scoped/3
+    aggregate_scoped/5
 
   The scope will ensure only access to conditions defined as scope given by a
   keyword list.
