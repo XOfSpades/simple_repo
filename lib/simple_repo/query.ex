@@ -29,7 +29,7 @@ defmodule SimpleRepo.Query do
   end
   defp scope_query(queriable, {key, {:not, value}})
        when is_binary(value) or is_integer(value) do
-    scope_query(queriable, {key, {:not, [value]}}) # maybe better solution?
+    scope_query(queriable, {key, {:not, [value]}})
   end
   defp scope_query(queriable, {key, {:not, values}}) when is_list(values) do
     queriable |> where([m], not field(m, ^key) in ^values)
