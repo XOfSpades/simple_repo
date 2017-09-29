@@ -1,22 +1,25 @@
-defmodule SimpleRepo.Repository do
+defmodule SimpleRepo.Scoped do
   @moduledoc """
-  SimpleRepo.Repository provides a macro enabling you to create simple database
-  interactions. The macro can be used by providing it the Ecto.Repo module:
+  SimpleRepo.Scoped provides a macro extending the Ecto.Repo module:
 
   defmodule MyRepository do\n
-      use SimpleRepo.Repository, repo: MyRepo\n
+    use Ecto.Repo, otp_app: :my_app
+    use SimpleRepo.Scoped, repo: __MODULE__
   end
 
   The following functions are available: \n
-    save/2, one/3, all/2, patch/4, destroy/3, aggregate/4
+    by_id_scoped/4
+    one_scoped/3,
+    all_scoped/2,
+    update_scoped/5,
+    update_all_scoped/4
+    delete_scoped/4,
+    delete_all_scoped/3
 
-  You can see the function as a mapping to crud actions:
-  create -> save
-  update -> patch
-  show -> one
-  index -> all
-  delete -> destroy
+  The scope will ensure only access to conditions defined as scope given by a
+  keyword list.
 
+  The scopes corresponds to everythng valid from SimpleRepo.Query
   """
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
@@ -26,28 +29,30 @@ defmodule SimpleRepo.Repository do
 
       @repo Keyword.get(opts, :repo)
 
-      def save(struct, params) do
-        struct
-        |> changeset(params)
-        |> @repo.insert
-      end
-
-      def one(model, id, scope \\ []) when is_binary(id) or is_integer(id) do
+      def by_id_scoped(model, id, scope, opts \\ [])
+          when is_binary(id) or is_integer(id) do
         model
         |> scoped(scope)
-        |> @repo.get(id)
+        |> @repo.get(id, opts)
         |> entity_result
       end
 
-      def all(model, scope \\ []) do
+      def one_scoped(model, scope, opts \\ []) do
         model
         |> scoped(scope)
-        |> @repo.all()
+        |> @repo.one(opts)
+        |> entity_result
       end
 
-      def patch(model, id, params, scope \\ []) do
+      def all_scoped(model, scope, opts \\ []) do
+        model
+        |> scoped(scope)
+        |> @repo.all(opts)
+      end
+
+      def update_scoped(model, id, params, scope, opts \\ []) do
         {_transaction_status, {status, response}} = @repo.transaction fn ->
-          case one(model, id, scope) do
+          case by_id_scoped(model, id, scope, opts) do
             {:error, :not_found} -> not_found()
             {:ok, entity} ->
               entity
@@ -58,9 +63,9 @@ defmodule SimpleRepo.Repository do
         {status, response}
       end
 
-      def destroy(model, id, scope \\ []) do
+      def delete_scoped(model, id, scope, opts \\ []) do
         {_transaction_status, {status, response}} = @repo.transaction fn ->
-          case one(model, id, scope) do
+          case by_id_scoped(model, id, scope, opts) do
             {:error, :not_found} -> not_found()
             {:ok, entity} -> @repo.delete(entity)
           end
@@ -68,11 +73,17 @@ defmodule SimpleRepo.Repository do
         {status, response}
       end
 
-      # aggretagtion_types: [:avg, :count, :max, :min, :sum]
-      def aggregate(model, aggregation_type, field, scope \\ []) do
+      def delete_all_scoped(model, scope, opts \\ []) do
         model
         |> scoped(scope)
-        |> @repo.aggregate(aggregation_type, field)
+        |> @repo.delete_all(opts)
+      end
+
+      # aggretagtion_types: [:avg, :count, :max, :min, :sum]
+      def aggregate_scoped(model, aggregation_type, field, scope, opts \\ []) do
+        model
+        |> scoped(scope)
+        |> @repo.aggregate(aggregation_type, field, opts)
       end
 
       defp entity_result(response) do
