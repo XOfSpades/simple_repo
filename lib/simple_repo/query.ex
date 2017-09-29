@@ -10,36 +10,23 @@ defmodule SimpleRepo.Query do
   Here scopes is a keyword list offering different possibilities to query against a database:
 
   [
-
     {key, nil}, # => "where key is nil"
-
     {key, value}, # => where key is equal to value
-
     {key, value_list}, # => where key is included in value_list
-
     {key, {:like, pattern}}, # => where key matches pattern
-
     {key, {:not, nil}}, # => "where key is not nil"
-
     {key, {:not, value}}, # => where key is not equal to value
-
     {key, {:not, value_list}}, # => where key is not included in value_list
-
     {key, {:not_like, pattern}}, # => where key does not match pattern
-
     {key, {:<, value}}, # => where key less than value
-
     {key, {:<=, value}}, # => where key less than or equal value
-
     {key, {:>, value}}, # => where key greater than value
-
     {key, {:>=, value}}, # => where key greater than or equal to value
-
   ]
 
   Example:
 
-  User |> Query.scoped([last_name: "Smith, age: {:>=, 21}]) |> Repo.all
+  User |> Query.scoped([last_name: "Smith", age: {:>=, 21}]) |> Repo.all
   """
 
   def scoped(queriable, scopes) when is_list(scopes) or is_map(scopes) do
