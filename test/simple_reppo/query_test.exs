@@ -146,7 +146,7 @@ defmodule SimpleRepo.QueryTest do
     end
 
     test "matches pattern with like statement", %{structs: structs} do
-      results = Query.scoped(TestStruct, [type: {:like, "a"}]) |> Repo.all
+      results = Query.scoped(TestStruct, [type: {:like, "%a%"}]) |> Repo.all
       assert length(results) == 4
 
       struct_data = structs
@@ -162,7 +162,7 @@ defmodule SimpleRepo.QueryTest do
     end
 
     test "matches pattern with not like statement", %{structs: structs} do
-      results = Query.scoped(TestStruct, [type: {:not_like, "a"}]) |> Repo.all
+      results = Query.scoped(TestStruct, [type: {:not_like, "%a%"}]) |> Repo.all
       assert length(results) == 3
 
       struct_data = structs

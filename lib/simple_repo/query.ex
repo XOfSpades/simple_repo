@@ -75,10 +75,10 @@ defmodule SimpleRepo.Query do
     queriable |> where([m], not field(m, ^key) in ^values)
   end
   defp scope_query(queriable, {key, {:like, pattern}}) do
-    from m in queriable, where: like(field(m, ^key), ^"%#{pattern}%")
+    from m in queriable, where: like(field(m, ^key), ^"#{pattern}")
   end
   defp scope_query(queriable, {key, {:not_like, pattern}}) do
-    from m in queriable, where: not like(field(m, ^key), ^"%#{pattern}%")
+    from m in queriable, where: not like(field(m, ^key), ^"#{pattern}")
   end
   defp scope_query(queriable, {key, {:<, value}}) do
     queriable |> where([m], field(m, ^key) < ^value)
