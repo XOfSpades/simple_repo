@@ -70,7 +70,7 @@ defmodule SimpleRepo.RepositoryTest do
       assert {:ok, item} == Repo.one_scoped(TestStruct, name: item.name)
     end
 
-    test "return no item if nothing is in scope", %{structs: structs} do
+    test "return no item if nothing is in scope" do
       result = Repo.one_scoped(TestStruct, type: "foobar")
       assert {:error, :not_found} == result
     end
