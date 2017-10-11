@@ -50,6 +50,44 @@ defmodule SimpleRepo.RepositoryTest do
     end
   end
 
+  describe ".update_all_scoped" do
+    test "updates all items in scopes and returns them", %{structs: structs} do
+      items = Enum.filter(structs, &(&1.type == "foo"))
+      {count, updated_items} = Repo.update_all_scoped(
+        TestStruct, [set: [type: "yay"]], [type: "foo"], returning: true
+      )
+
+      assert count == length(items)
+
+      Enum.each(items, fn item ->
+        db_item = Repo.get(TestStruct, item.id)
+        assert db_item
+        assert db_item.type == "yay"
+        assert Map.delete(item, :type) == Map.delete(db_item, :type)
+        assert Enum.member?(updated_items, db_item)
+      end)
+
+      yay_items = TestStruct |> Ecto.Query.where(type: "yay") |> Repo.all
+      assert length(yay_items) == length(updated_items)
+    end
+
+    test "raises an exception when params are invalid", %{structs: structs} do
+      items = Enum.filter(structs, &(&1.type == "foo"))
+      assert_raise(
+        Postgrex.Error,
+        fn ->
+          Repo.update_all_scoped(TestStruct, [set: [type: nil]], [type: "foo"])
+        end
+      )
+
+      Enum.each(items, fn item ->
+        db_item = Repo.get(TestStruct, item.id)
+        assert db_item
+        assert item == db_item
+      end)
+    end
+  end
+
   describe ".by_id_scoped" do
     test "return the item in scope", %{structs: structs} do
       [item|_] = structs

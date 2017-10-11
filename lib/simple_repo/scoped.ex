@@ -64,6 +64,12 @@ defmodule SimpleRepo.Scoped do
         {status, response}
       end
 
+      def update_all_scoped(model, params, scope, opts \\ []) do
+        model
+        |> scoped(scope)
+        |> @repo.update_all(params, opts)
+      end
+
       def delete_scoped(model, id, scope, opts \\ []) do
         {_transaction_status, {status, response}} = @repo.transaction fn ->
           case by_id_scoped(model, id, scope, opts) do
