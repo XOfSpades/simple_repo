@@ -4,17 +4,25 @@
 
 This is a library enabling you to create a simple way to query for data using simple data structures like keyword lists.
 
+## Add to dependencies
+
+```elixir
+defp deps do
+  [
+    {:simple_repo, "~> 1.0.0"}
+  ]
+end
+```
+
 ## Usage
 
 This library is designed as a macro. You can add it's functionality to any module not conflicting the interface. But I recomment using it in an own empty module.
 
 ```elixir
+# To integrate into your Repo module you can use the Scoped macro:
 defmodule MyApp.Repo do
     use Ecto.Repo, otp_app: :my_app
-end
-
-defmodule MyApp.Repository do
-    use SimpleRepo.Repository, repo: MyApp.Repo
+    use SimpleRepo.Scoped, repo: __MODULE__
 end
 
 # Create a schema and have a def changeset/2 function in place. This is a required convention to make this library work.
@@ -47,82 +55,81 @@ end
 With this setup you can use it as follows.
 
 ```elixir
-# SAVE
-MyApp.Repository.save((%MyApp.User{}, %{email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}))
-# => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
-# When invalid:
-# => {:error, changeset}
-
-# REVISE (for updates)
-MyApp.Repository.patch(MyApp.User, 42, %{org: "Baz Ltd"})
+# UPDATE_SCOPED (for updates by primary key)
+MyApp.Repository.update_scoped(MyApp.User, 42, [org: "Baz Ltd"])
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}}
 # When invalid:
 # => {:error, changeset}
 # When id does not exist:
 # => {:error, :not_found}
 
-# For update scoping to a specified search space is possible:
-MyApp.Repository.patch(MyApp.User, 42, %{org: "Baz Ltd"}, [org: "Foobar Ltd"])
-# Returns {:error, :not found} if no user with id = 42 and org = "Foobar Ltd"} exists
+# UPDATE_ALL_SCOPED
+# For update all items in a scope. The specification of the return value can be found in the Ecto.Repo documentation &update_all/3:
+MyApp.Repository.update_all_scoped(MyApp.User, %{org: "Baz Ltd"}, [org: "Foobar Ltd"])
 
-# ONE (to get a single element)
-MyApp.Repository.one(MyApp.User, 42)
+# BY_ID_SCOPED
+# Get item by primary key ensuring a scope is satisfied
+MyApp.Repository.by_id_scoped(MyApp.User, [org: "Baz Ltd"])
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
 # When id does not exist:
 # => {:error, :not_found}
 
-# For get scoping to a specified search space is possible:
-MyApp.Repository.one(MyApp.User, 42, [org: "Foobar Ltd"])
-# Returns {:error, :not found} if no user with id = 42 and org = "Foobar Ltd"} exists
+# ONE_SCOPED (to get a single element)
+MyApp.Repository.one_scoped(MyApp.User, [email: "foo@bar.com])
+# => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
+# When id does not exist:
+# => {:error, :not_found}
+# When multiple items would match an exception is raised (See Ecto.Repo &one/2)
 
-# ALL
+# ALL_SCOPED
 MyApp.Repository.all(MyApp.User)
 # => [%MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}, ...]
 # Again scoping to a specified search space is possible:
 MyApp.Repository.all(MyApp.User, [org: "Foobar Ltd"])
 
-# DESTROY
-MyApp.Repository.destroy(MyApp, 42)
+# DELETE_SCOPED
+MyApp.Repo.delete_scoped(MyApp, 42, [org: Foobar Ldt])
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
 # When no such item exists:
 # => {:error, :not_found}
 
-# Again scoping to a smaller search space is possible:
-MyApp.Repository.destroy(MyApp, 42, [org: "Foobar Ltd"])
-
 # AGGREGATE
-MyApp.Repository.aggregate(MyApp, :count, :id)
-# => 1
+MyApp.Repo.aggregate(MyApp, :count, :id, [org: Foobar Ldt])
+# => 3
 # Also here scoping is possible
 MyApp.Repository.aggregate(MyApp, :count, :id, [org: "Foobar Ltd"])
 # possible aggregations: [:avg, :count, :max, :min, :sum]
 ```
 
-There are different ways to add scopes/queries. Here are some examples:
+There are different ways to add scopes. As an alternative you can also use the Query module. The opportunities are the same also syntaxwise.
+Here are some examples:
 ```elixir
-MyApp.Repository.all(MyApp.User, [:last_name, "Smith"])
-# Query for all users with last_name 'Smith'
+SimpleRepo.Query.scoped(MyApp.User, [last_name: "Smith"])
+# Scope to all users with last_name 'Smith'
 
-MyApp.Repository.all(MyApp.User, [:last_name, {:not, "Smith"}])
-# Query for all users not having last_name 'Smith'
+SimpleRepo.Query.scoped(MyApp.User, [last_name: {:not, "Smith"}])
+# Scope to all users not having last_name 'Smith'
 
-MyApp.Repository.all(MyApp.User, [:org, nil])
-# Query for all users not belonging to an org (The library handles the NULL case for you)
+SimpleRepo.Query.scoped(MyApp.User, [org: nil])
+# Scope to all users not belonging to an org (The library handles the NULL case for you)
 
-MyApp.Repository.all(MyApp.User, [:org, {:not, nil}])
-# Query for all users belonging to an org.
+SimpleRepo.Query.scoped(MyApp.User, [org: {:not, nil}])
+# Scope to all users belonging to an org.
 
-MyApp.Repository.all(MyApp.User, [:first_name, ["Kevin", "Hugo", "James"]])
-# Query for all users either having 'Kevin', 'Hugo' or 'James' as first_name). This is equivalent to the SQL 'WHERE IN'
+SimpleRepo.Query.scoped(MyApp.User, [first_name: ["Kevin", "Hugo", "James"]])
+# Scope to all users either having 'Kevin', 'Hugo' or 'James' as first_name). This is equivalent to the SQL 'WHERE IN'
 
-MyApp.Repository.all(MyApp.User, [:first_name, {:not, ["Kevin", "Hugo", "James"]}])
-# Query for all users NOT having 'Kevin', 'Hugo' or 'James' as first_name)
+SimpleRepo.Query.scoped(MyApp.User, [first_name: {:not, ["Kevin", "Hugo", "James"]}])
+# Scope to all users NOT having 'Kevin', 'Hugo' or 'James' as first_name)
 
-MyApp.Repository.all(MyApp.User, [:email, {:like, "@gmail."}])
+SimpleRepo.Query.scoped(MyApp.User, [email: {:like, "@gmail."}])
 # Scope to all email addresses containing '@gmail.'
 
-MyApp.Repository.all(MyApp.User, [:email, {:not_like, "@gmail."}])
+SimpleRepo.Query.scoped(MyApp.User, [email: {:not_like, "@gmail."}])
 # Scope to all email addresses NOT containing '@gmail.'
+
+SimpleRepo.Query.scoped(MyApp.User, [inserted_at: {:<=, Ecto.DateTime.from_erl({{2017, 1, 1}, {0, 0, 0}}})])
+# Scope to all users either inserted after or at 2017-01-01T00:00:00Z. Analogue you can use :<, :> and :>=.
 
 ```
 
