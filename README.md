@@ -69,7 +69,7 @@ MyApp.Repository.update_all_scoped(MyApp.User, %{org: "Baz Ltd"}, [org: "Foobar 
 
 # BY_ID_SCOPED
 # Get item by primary key ensuring a scope is satisfied
-MyApp.Repository.by_id_scoped(MyApp.User, [org: "Baz Ltd"])
+MyApp.Repository.by_id_scoped(MyApp.User, 42, [org: "Baz Ltd"])
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
 # When id does not exist:
 # => {:error, :not_found}
@@ -82,16 +82,18 @@ MyApp.Repository.one_scoped(MyApp.User, [email: "foo@bar.com])
 # When multiple items would match an exception is raised (See Ecto.Repo &one/2)
 
 # ALL_SCOPED
-MyApp.Repository.all(MyApp.User)
+MyApp.Repository.all_scoped(MyApp.User, [org: "Foobar Ltd"])
 # => [%MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}, ...]
-# Again scoping to a specified search space is possible:
-MyApp.Repository.all(MyApp.User, [org: "Foobar Ltd"])
 
 # DELETE_SCOPED
 MyApp.Repo.delete_scoped(MyApp, 42, [org: Foobar Ldt])
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}}
 # When no such item exists:
 # => {:error, :not_found}
+
+# DELETE_ALL_SCOPED
+MyApp.Repo.delete_all_scoped(MyApp, [org: Foobar Ldt])
+# => [%MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}, ...]
 
 # AGGREGATE
 MyApp.Repo.aggregate(MyApp, :count, :id, [org: Foobar Ldt])
