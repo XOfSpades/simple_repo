@@ -16,7 +16,7 @@ end
 
 ## Usage
 
-This library is designed as a macro. You can add it's functionality to any module not conflicting the interface. But I recomment using it in an own empty module.
+You can either use the SimpleRepo.Query module to create queries to use them with Ecto.Repo or add the SimpleRepo.Scoped macro to your own Repo module (see below).
 
 ```elixir
 # To integrate into your Repo module you can use the Scoped macro:
