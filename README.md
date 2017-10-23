@@ -65,7 +65,7 @@ MyApp.Repository.update_scoped(MyApp.User, 42, [org: "Baz Ltd"])
 
 # UPDATE_ALL_SCOPED
 # For update all items in a scope. The specification of the return value can be found in the Ecto.Repo documentation &update_all/3:
-MyApp.Repository.update_all_scoped(MyApp.User, %{org: "Baz Ltd"}, [org: "Foobar Ltd"])
+MyApp.Repository.update_all_scoped(MyApp.User, [set: [org: "Baz Ltd"]], [org: "Foobar Ltd"])
 
 # BY_ID_SCOPED
 # Get item by primary key ensuring a scope is satisfied
