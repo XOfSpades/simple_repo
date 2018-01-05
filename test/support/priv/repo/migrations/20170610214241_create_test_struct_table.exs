@@ -6,6 +6,7 @@ defmodule SimpleRepo.Support.Repo.Migrations.CreateTestStructTable do
       add :name,    :string, size: 30, null: false
       add :type,    :string, size: 10, null: false
       add :value,   :integer
+      add :f_value, :float
 
       timestamps()
     end

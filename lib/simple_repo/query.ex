@@ -55,7 +55,7 @@ defmodule SimpleRepo.Query do
     from m in queriable, where: is_nil(field(m, ^key))
   end
   defp scope_query(queriable, {key, value})
-       when is_binary(value) or is_integer(value) do
+       when is_binary(value) or is_number(value) do
     queriable |> where(^[{key, value}])
   end
   defp scope_query(queriable, {key, value}) when is_atom(value) do

@@ -17,10 +17,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type == "foo" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -33,10 +33,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type == "foo" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -49,10 +49,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> is_nil(x.value) end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -65,10 +65,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type == "foo" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -81,10 +81,26 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type != "foo" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
+    test "scopes to items equal to float value", %{structs: structs} do
+      results = Query.scoped(TestStruct, [f_value: 42.2]) |> Repo.all
+      assert length(results) == 2
+
+      struct_data = structs
+      |> Enum.filter(fn(x) -> x.f_value == 42.2 end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -97,10 +113,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.value end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -116,10 +132,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type == "foo" || x.type == "bar" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -135,10 +151,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type == "baz" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -151,10 +167,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type == "bar" || x.type == "baz" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -167,10 +183,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> x.type == "foo" end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -183,10 +199,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value < 4 end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -199,10 +215,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value <= 3 end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -215,10 +231,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value > 3 end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
@@ -231,10 +247,10 @@ defmodule SimpleRepo.QueryTest do
 
       struct_data = structs
       |> Enum.filter(fn(x) -> !is_nil(x.value) && x.value >= 4 end)
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       result_data = results
-      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value]) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
       for expected <- struct_data do
         assert Enum.member?(result_data, expected)
