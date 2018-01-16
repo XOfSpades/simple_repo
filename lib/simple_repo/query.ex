@@ -68,7 +68,7 @@ defmodule SimpleRepo.Query do
     from m in queriable, where: not is_nil(field(m, ^key))
   end
   defp scope_query(queriable, {key, {:not, value}})
-       when is_binary(value) or is_integer(value) do
+       when is_binary(value) or is_number(value) do
     scope_query(queriable, {key, {:not, [value]}})
   end
   defp scope_query(queriable, {key, {:not, values}}) when is_list(values) do

@@ -76,18 +76,32 @@ defmodule SimpleRepo.QueryTest do
     end
 
     test "scopes to items not equal to value", %{structs: structs} do
-      results = Query.scoped(TestStruct, [type: {:not, "foo"}]) |> Repo.all
-      assert length(results) == 4
+      results1 = Query.scoped(TestStruct, [type: {:not, "foo"}]) |> Repo.all
+      assert length(results1) == 4
 
-      struct_data = structs
+      struct_data1 = structs
       |> Enum.filter(fn(x) -> x.type != "foo" end)
       |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
-      result_data = results
+      result_data1 = results1
       |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
 
-      for expected <- struct_data do
-        assert Enum.member?(result_data, expected)
+      for expected <- struct_data1 do
+        assert Enum.member?(result_data1, expected)
+      end
+
+      results2 = Query.scoped(TestStruct, [f_value: {:not, 42.2}]) |> Repo.all
+      assert length(results2) == 3
+
+      struct_data2 = structs
+      |> Enum.filter(fn(x) -> x.f_value != 42.2 && !is_nil(x.f_value) end)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      result_data2 = results2
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      for expected <- struct_data2 do
+        assert Enum.member?(result_data2, expected)
       end
     end
 
