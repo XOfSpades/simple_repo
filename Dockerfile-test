@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir:1.5.1
+FROM elixir:1.5.3-alpine
 
 MAINTAINER bernhard.stoecker@recogizer.de
 
