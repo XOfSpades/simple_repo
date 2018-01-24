@@ -271,4 +271,82 @@ defmodule SimpleRepo.QueryTest do
       end
     end
   end
+
+  describe ".ordered" do
+    test "order desc with one conditions", %{structs: structs} do
+      results = TestStruct
+      |> Query.ordered({:name, :desc})
+      |> Repo.all
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      expected = structs
+      |> Enum.sort(&(&1.name >= &2.name))
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      assert result_data == expected
+    end
+
+    test "order asc with one conditions", %{structs: structs} do
+      results = TestStruct
+      |> Query.ordered({:name, :asc})
+      |> Repo.all
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      expected = structs
+      |> Enum.sort(&(&1.name <= &2.name))
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      assert result_data == expected
+    end
+
+    test "order desc with two conditions", %{structs: structs} do
+      results = TestStruct
+      |> Query.ordered([{:f_value, :desc}, {:name, :desc}])
+      |> Repo.all
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      expected = structs
+      |> Enum.sort(&order_desc/2)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      assert result_data == expected
+    end
+
+    test "order asc with two conditions", %{structs: structs} do
+      results = TestStruct
+      |> Query.ordered([{:f_value, :asc}, {:name, :asc}])
+      |> Repo.all
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      expected = structs
+      |> Enum.sort(&order_asc/2)
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      assert result_data == expected
+    end
+  end
+
+  defp order_desc(item1, item2) do
+    if item1.f_value == item2.f_value do
+      item1.name > item2.name
+    else
+      item1.f_value > item2.f_value
+    end
+  end
+
+  defp order_asc(item1, item2) do
+    if item1.f_value == item2.f_value do
+      item1.name < item2.name
+    else
+      item1.f_value < item2.f_value
+    end
+  end
 end
