@@ -48,6 +48,7 @@ defmodule SimpleRepo.Scoped do
       def all_scoped(model, scope, opts \\ []) do
         model
         |> scoped(scope)
+        |> order(opts)
         |> @repo.all(opts)
       end
 
@@ -106,6 +107,13 @@ defmodule SimpleRepo.Scoped do
 
       defp changeset(struct, params) do
         struct.__struct__.changeset(struct, params)
+      end
+
+      defp order(queriable, opts) do
+        case Keyword.get(opts, :order_by, nil) do
+          nil -> queriable
+          ordering -> ordered(queriable, ordering)
+        end
       end
     end
   end

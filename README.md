@@ -84,6 +84,9 @@ MyApp.Repository.one_scoped(MyApp.User, [email: "foo@bar.com])
 # ALL_SCOPED
 MyApp.Repository.all_scoped(MyApp.User, [org: "Foobar Ltd"])
 # => [%MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}, ...]
+# .all_scoped also allows ordering via options:
+MyApp.Repository.all_scoped(MyApp.User, [org: "Foobar Ltd"], [order_by: [first_name: :asc]])
+# => [%MyApp.User{id: 42, email: "foo@bar.com", first_name: "Aaron", last_name: "Baron", org: "Baz Ltd"}, ...]
 
 # DELETE_SCOPED
 MyApp.Repo.delete_scoped(MyApp, 42, [org: Foobar Ldt])
@@ -132,6 +135,12 @@ SimpleRepo.Query.scoped(MyApp.User, [email: {:not_like, "@gmail."}])
 
 SimpleRepo.Query.scoped(MyApp.User, [inserted_at: {:<=, Ecto.DateTime.from_erl({{2017, 1, 1}, {0, 0, 0}}})])
 # Scope to all users either inserted after or at 2017-01-01T00:00:00Z. Analogue you can use :<, :> and :>=.
+
+# Again ordering is possible:
+SimpleRepo.Query.ordered(MyApp.User, {:last_name, :asc})
+# or
+SimpleRepo.Query.ordered(MyApp.User, last_name: :asc, first_name: :asc)
+# The order direction is either :asc of :desc
 
 ```
 

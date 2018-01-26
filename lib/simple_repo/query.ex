@@ -48,6 +48,15 @@ defmodule SimpleRepo.Query do
     )
   end
 
+  def ordered(queriable, {key, direction})
+      when direction == :desc or direction == :asc do
+    from m in queriable, order_by: [{^direction, ^key}]
+  end
+  def ordered(queriable, order_list) do
+    order = Enum.map(order_list, fn {key, direction} -> {direction, key} end)
+    from m in queriable, order_by: ^order
+  end
+
   defp scope_query(queriable, {key, value}) when is_binary(key) do
     scope_query(queriable, {String.to_existing_atom(key), value})
   end
