@@ -148,6 +148,28 @@ defmodule SimpleRepo.RepositoryTest do
       expected = Enum.filter(structs, &(&1.type == "foo" || &1.type == "bar"))
       assert MapSet.new(result) == MapSet.new(expected)
     end
+
+    test "supports ordering via opts", %{structs: structs} do
+      ordering = fn item1, item2 ->
+        if item1.f_value == item2.f_value do
+          item1.name > item2.name
+        else
+          item1.f_value < item2.f_value
+        end
+      end
+
+      result = Repo.all_scoped(
+        TestStruct,
+        [type: ["foo", "baz"]],
+        [order_by: [{:f_value, :asc}, {:name, :desc}]]
+      )
+
+      expected = structs
+      |> Enum.filter(&(&1.type == "foo" || &1.type == "baz"))
+      |> Enum.sort(ordering)
+
+      assert result == expected
+    end
   end
 
   describe ".delete_scoped" do
