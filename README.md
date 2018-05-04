@@ -55,8 +55,8 @@ end
 With this setup you can use it as follows.
 
 ```elixir
-# UPDATE_SCOPED (for updates by primary key)
-MyApp.Repository.update_scoped(MyApp.User, 42, [org: "Baz Ltd"])
+# UPDATE_SCOPED (for updates by primary key). Here "Foobar Ltd" was the former org, "Baz Ltd" is the new org.
+MyApp.Repository.update_scoped(MyApp.User, 42, %{org: "Foo Ltd"}, [org: "Foobar Ltd"])
 # => {:ok, %MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Baz Ltd"}}
 # When invalid:
 # => {:error, changeset}
