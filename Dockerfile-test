@@ -1,4 +1,4 @@
-FROM elixir:1.6.1-alpine
+FROM elixir:1.6.4-alpine
 
 MAINTAINER bernhard.stoecker@recogizer.de
 
