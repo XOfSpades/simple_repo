@@ -63,12 +63,12 @@ defmodule SimpleRepo.Query do
   defp scope_query(queriable, {key, nil}) do
     from m in queriable, where: is_nil(field(m, ^key))
   end
-  defp scope_query(queriable, {key, value})
-       when is_binary(value) or is_number(value) do
-    queriable |> where(^[{key, value}])
-  end
   defp scope_query(queriable, {key, value}) when is_atom(value) do
     scope_query(queriable, {key, Atom.to_string(value)})
+  end
+  defp scope_query(queriable, {key, value})
+       when not is_list(value) and not is_tuple(value) do
+    queriable |> where(^[{key, value}])
   end
   defp scope_query(queriable, {key, values}) when is_list(values) do
     queriable |> where([m], field(m, ^key) in ^values)
@@ -77,7 +77,7 @@ defmodule SimpleRepo.Query do
     from m in queriable, where: not is_nil(field(m, ^key))
   end
   defp scope_query(queriable, {key, {:not, value}})
-       when is_binary(value) or is_number(value) do
+       when not is_list(value) and not is_tuple(value) do
     scope_query(queriable, {key, {:not, [value]}})
   end
   defp scope_query(queriable, {key, {:not, values}}) when is_list(values) do
