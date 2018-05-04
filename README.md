@@ -98,11 +98,11 @@ MyApp.Repo.delete_scoped(MyApp, 42, [org: Foobar Ldt])
 MyApp.Repo.delete_all_scoped(MyApp, [org: Foobar Ldt])
 # => [%MyApp.User{id: 42, email: "foo@bar.com", first_name: "John", last_name: "Doe", org: "Foobar Ltd"}, ...]
 
-# AGGREGATE
-MyApp.Repo.aggregate(MyApp, :count, :id, [org: Foobar Ldt])
+# AGGREGATE_SCOPED
+MyApp.Repo.aggregate_scoped(MyApp, :count, :id, [org: Foobar Ldt])
 # => 3
 # Also here scoping is possible
-MyApp.Repository.aggregate(MyApp, :count, :id, [org: "Foobar Ltd"])
+MyApp.Repository.aggregate_scoped(MyApp, :count, :id, [org: "Foobar Ltd"])
 # possible aggregations: [:avg, :count, :max, :min, :sum]
 ```
 
