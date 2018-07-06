@@ -123,7 +123,7 @@ defmodule SimpleRepo.QueryTest do
       end
     end
 
-    test "scopes to valie different to a specific NaiveDateTime" do
+    test "scopes to different to a specific NaiveDateTime" do
       test_struct = TestStruct |> Repo.all() |> Enum.random()
       query_result = TestStruct
       |> Query.scoped([inserted_at: {:not, test_struct.inserted_at}])
@@ -137,6 +137,22 @@ defmodule SimpleRepo.QueryTest do
           NaiveDateTime.compare(
             test_struct.inserted_at, item.inserted_at
           ) != :eq
+        end
+      )
+    end
+
+    test "scopes to items having a higher NaiveDateTime" do
+      test_struct = TestStruct |> Repo.all() |> Enum.random()
+      query_result = TestStruct
+      |> Query.scoped([inserted_at: {:>, test_struct.inserted_at}])
+      |> Repo.all()
+
+      assert Enum.all?(
+        query_result,
+        fn item ->
+          NaiveDateTime.compare(
+            test_struct.inserted_at, item.inserted_at
+          ) == :lt
         end
       )
     end
