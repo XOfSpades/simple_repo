@@ -127,10 +127,10 @@ SimpleRepo.Query.scoped(MyApp.User, [first_name: ["Kevin", "Hugo", "James"]])
 SimpleRepo.Query.scoped(MyApp.User, [first_name: {:not, ["Kevin", "Hugo", "James"]}])
 # Scope to all users NOT having 'Kevin', 'Hugo' or 'James' as first_name)
 
-SimpleRepo.Query.scoped(MyApp.User, [email: {:like, "@gmail."}])
-# Scope to all email addresses containing '@gmail.'
+SimpleRepo.Query.scoped(MyApp.User, [email: {:like, "%@gmail.%"}])
+# Scope to all email addresses containing '@gmail.' Note that the '%' comes from the postgres syntax.
 
-SimpleRepo.Query.scoped(MyApp.User, [email: {:not_like, "@gmail."}])
+SimpleRepo.Query.scoped(MyApp.User, [email: {:not_like, "%@gmail.%"}])
 # Scope to all email addresses NOT containing '@gmail.'
 
 SimpleRepo.Query.scoped(MyApp.User, [inserted_at: {:<=, Ecto.DateTime.from_erl({{2017, 1, 1}, {0, 0, 0}}})])
