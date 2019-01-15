@@ -5,7 +5,7 @@ defmodule SimpleRepo.Mixfile do
     version = "1.1.3"
     [app: :simple_repo,
      version: version,
-     elixir: "~> 1.5 or ~> 1.6 or ~> 1.7",
+     elixir: "~> 1.5 or ~> 1.6 or ~> 1.7 or ~> 1.8",
      elixirc_paths: elixirc_paths(Mix.env),
      description: "A wrapper around Ecto to simplify queries",
      package: package(),
@@ -45,8 +45,9 @@ defmodule SimpleRepo.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ecto, "~> 2.1"},
-      {:postgrex, "~> 0.13", only: :test},
+      {:ecto, "~> 3.0 or ~> 2.1"},
+      {:ecto_sql, "~> 3.0"},
+      {:postgrex, "~> 0.14", only: :test},
       {:excoveralls, "~> 0.7.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]

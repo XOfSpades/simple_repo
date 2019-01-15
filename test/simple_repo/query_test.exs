@@ -76,9 +76,13 @@ defmodule SimpleRepo.QueryTest do
     end
 
     test "scopes to specific NaiveDateTime element" do
-      test_struct = TestStruct |> Repo.all() |> Enum.random()
+      test_struct =
+        TestStruct
+        |> Repo.all()
+        |> Enum.filter(& &1.some_time)
+        |> Enum.random()
       query_result = TestStruct
-      |> Query.scoped([inserted_at: test_struct.inserted_at])
+      |> Query.scoped([some_time: test_struct.some_time])
       |> Repo.all()
 
       assert length(query_result) > 0
@@ -87,7 +91,7 @@ defmodule SimpleRepo.QueryTest do
         query_result,
         fn item ->
           NaiveDateTime.compare(
-            test_struct.inserted_at, item.inserted_at
+            test_struct.some_time, item.some_time
           ) == :eq
         end
       )
@@ -123,10 +127,14 @@ defmodule SimpleRepo.QueryTest do
       end
     end
 
-    test "scopes to different to a specific NaiveDateTime" do
-      test_struct = TestStruct |> Repo.all() |> Enum.random()
+    test "scopes to a negated NaiveDateTime" do
+      test_struct =
+        TestStruct
+        |> Repo.all()
+        |> Enum.filter(& &1.some_time)
+        |> Enum.random()
       query_result = TestStruct
-      |> Query.scoped([inserted_at: {:not, test_struct.inserted_at}])
+      |> Query.scoped([some_time: {:not, test_struct.some_time}])
       |> Repo.all()
 
       assert length(query_result) > 0
@@ -135,23 +143,27 @@ defmodule SimpleRepo.QueryTest do
         query_result,
         fn item ->
           NaiveDateTime.compare(
-            test_struct.inserted_at, item.inserted_at
+            test_struct.some_time, item.some_time
           ) != :eq
         end
       )
     end
 
     test "scopes to items having a higher NaiveDateTime" do
-      test_struct = TestStruct |> Repo.all() |> Enum.random()
+      test_struct =
+        TestStruct
+        |> Repo.all()
+        |> Enum.filter(& &1.some_time)
+        |> Enum.random()
       query_result = TestStruct
-      |> Query.scoped([inserted_at: {:>, test_struct.inserted_at}])
+      |> Query.scoped([some_time: {:>, test_struct.some_time}])
       |> Repo.all()
 
       assert Enum.all?(
         query_result,
         fn item ->
           NaiveDateTime.compare(
-            test_struct.inserted_at, item.inserted_at
+            test_struct.some_time, item.some_time
           ) == :lt
         end
       )
