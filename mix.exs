@@ -2,7 +2,7 @@ defmodule SimpleRepo.Mixfile do
   use Mix.Project
 
   def project do
-    version = "1.1.3"
+    version = "1.2.0"
     [app: :simple_repo,
      version: version,
      elixir: "~> 1.5 or ~> 1.6 or ~> 1.7 or ~> 1.8",
@@ -46,7 +46,7 @@ defmodule SimpleRepo.Mixfile do
   defp deps do
     [
       {:ecto, "~> 3.0 or ~> 2.1"},
-      {:ecto_sql, "~> 3.0"},
+      {:ecto_sql, "~> 3.0", only: :test},
       {:postgrex, "~> 0.14", only: :test},
       {:excoveralls, "~> 0.7.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev}
