@@ -81,7 +81,7 @@ defmodule SimpleRepo.Query do
     scope_query(queriable, {key, {:not, [value]}})
   end
   defp scope_query(queriable, {key, {:not, values}}) when is_list(values) do
-    queriable |> where([m], not field(m, ^key) in ^values)
+    queriable |> where([m], field(m, ^key) not in ^values)
   end
   defp scope_query(queriable, {key, {:like, pattern}}) do
     from m in queriable, where: like(field(m, ^key), ^"#{pattern}")
