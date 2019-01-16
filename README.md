@@ -9,7 +9,7 @@ This is a library enabling you to create a simple way to query for data using si
 ```elixir
 defp deps do
   [
-    {:simple_repo, "~> 1.1"}
+    {:simple_repo, "~> 1.2"}
   ]
 end
 ```
