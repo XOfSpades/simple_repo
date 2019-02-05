@@ -398,6 +398,311 @@ defmodule SimpleRepo.QueryTest do
     end
   end
 
+  describe "jsonb queries" do
+    test "finds with specific key value pairs", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {"foo", "hurz"}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) && Map.get(s.jsonb, "foo") == "hurz"
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 1
+      assert result_data == expected
+    end
+
+    test "finds with nested keys a specific value", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {["baz", "boom"], 42}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) && get_in(s.jsonb, ["baz", "boom"]) == 42
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 2
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds with nested atom keys a specific value", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {[:baz, :boom], 42}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) && get_in(s.jsonb, ["baz", "boom"]) == 42
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 2
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds key with boolean value", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {"foo", true}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) && Map.get(s.jsonb, "foo") == true
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 1
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds nested key with boolean value", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {["answer", 42], true}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) && Map.get(s.jsonb, "answer") == %{"42" => true}
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 1
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with > operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {["baz", "boom"], :>, 43}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(get_in(s.jsonb, ["baz", "boom"])) &&
+        get_in(s.jsonb, ["baz", "boom"]) > 43
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 1
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with < operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {["baz", "boom"], :<, 43}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(get_in(s.jsonb, ["baz", "boom"])) &&
+        get_in(s.jsonb, ["baz", "boom"]) < 43
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 2
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with >= operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {["baz", "boom"], :>=, 43}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(get_in(s.jsonb, ["baz", "boom"])) &&
+        get_in(s.jsonb, ["baz", "boom"]) >= 43
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 2
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with <= operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {["baz", "boom"], :<=, 43}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(get_in(s.jsonb, ["baz", "boom"])) &&
+        get_in(s.jsonb, ["baz", "boom"]) <= 43
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 3
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with LIKE operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {"foo", :like, "%a%"}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(Map.get(s.jsonb, "foo")) &&
+        (Map.get(s.jsonb, "foo") == "bar" || Map.get(s.jsonb, "foo") == "bam")
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 3
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with NOT LIKE operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {"foo", :not_like, "%a%"}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(Map.get(s.jsonb, "foo")) &&
+        (Map.get(s.jsonb, "foo") != "bar" && Map.get(s.jsonb, "foo") != "bam")
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 2
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with IN operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {"foo", ["bar", "bam"]}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(Map.get(s.jsonb, "foo")) &&
+        (Map.get(s.jsonb, "foo") == "bar" || Map.get(s.jsonb, "foo") == "bam")
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 3
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+    test "finds entities with NOT IN operator", %{structs: structs} do
+      results = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {"foo", :not_in, ["bar", "bam"]}}}])
+      |> Repo.all()
+
+      result_data = results
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      expected = structs
+      |> Enum.filter(fn s ->
+        !is_nil(s.jsonb) &&
+        !is_nil(Map.get(s.jsonb, "foo")) &&
+        (Map.get(s.jsonb, "foo") != "bar" && Map.get(s.jsonb, "foo") != "bam")
+      end)
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
+
+      assert length(results) == 2
+      assert MapSet.new(result_data) == MapSet.new(expected)
+    end
+
+  end
+
   defp order_desc(item1, item2) do
     if item1.f_value == item2.f_value do
       item1.name > item2.name

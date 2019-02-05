@@ -10,12 +10,13 @@ defmodule SimpleRepo.Support.TestStruct do
     field :value,     :integer
     field :f_value,   :float
     field :some_time, :naive_datetime
+    field :jsonb,     :map
 
     timestamps()
   end
 
   def changeset(model, params \\ %{}) do
-    fields = ~w(name type value f_value some_time)a
+    fields = ~w(name type value f_value some_time jsonb)a
 
     model
     |> Ecto.Changeset.cast(params, fields)
