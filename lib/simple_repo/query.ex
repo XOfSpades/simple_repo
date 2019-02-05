@@ -161,10 +161,12 @@ defmodule SimpleRepo.Query do
     from m in queriable,
       where: fragment("? #>> ?", field(m, ^key), ^str_path) not in ^str_values
   end
-  defp scope_query(queriable, {key, {:json, {path, operator, value}}}) when not is_list(path) do
+  defp scope_query(queriable, {key, {:json, {path, operator, value}}})
+       when not is_list(path) do
     scope_query(queriable, {key, {:json, {[path], operator, value}}})
   end
-  defp scope_query(queriable, {key, {:json, {path, operator, value}}}) when not is_binary(value) do
+  defp scope_query(queriable, {key, {:json, {path, operator, value}}})
+       when not is_binary(value) do
     scope_query(queriable, {key, {:json, {path, operator, map_value(value)}}})
   end
 
