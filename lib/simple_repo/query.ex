@@ -102,14 +102,14 @@ defmodule SimpleRepo.Query do
     queriable |> where([m], field(m, ^key) >= ^value)
   end
   defp scope_query(queriable, {key, {:json, {path, value}}})
+       when not is_list(path) do
+    scope_query(queriable, {key, {:json, {[path], value}}})
+  end
+  defp scope_query(queriable, {key, {:json, {path, value}}})
        when is_list(path) and not is_list(value) do
     str_path = Enum.map(path, &to_str/1)
     from m in queriable, where: fragment(
       "? #>> ? = ?", field(m, ^key), ^str_path, ^map_value(value))
-  end
-  defp scope_query(queriable, {key, {:json, {path, value}}})
-       when not is_list(path) do
-    scope_query(queriable, {key, {:json, {[path], value}}})
   end
   defp scope_query(queriable, {key, {:json, {path, :>, value}}})
        when is_list(path) and is_binary(value) do

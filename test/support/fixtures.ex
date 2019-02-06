@@ -33,5 +33,5 @@ defmodule SimpleRepo.Support.Fixtures do
 
   defp json3(), do: %{"foo" => "hurz", "baz" => %{"boom" => 44}}
 
-  defp json4(), do: %{"foo" => true, "answer" => %{42 => true}}
+  defp json4(), do: %{"foo" => true, "answer" => %{42 => true}, "empty" => nil}
 end
