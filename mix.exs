@@ -2,7 +2,7 @@ defmodule SimpleRepo.Mixfile do
   use Mix.Project
 
   def project do
-    version = "1.2.1"
+    version = "1.2.0"
     [app: :simple_repo,
      version: version,
      elixir: "~> 1.5 or ~> 1.6 or ~> 1.7 or ~> 1.8",
@@ -24,6 +24,7 @@ defmodule SimpleRepo.Mixfile do
   end
 
   defp elixirc_paths(:prod), do: ["lib"]
+  defp elixirc_paths(:dev), do: ["lib"]
   defp elixirc_paths(_),     do: ["lib",  "test/support"]
 
   defp package do
