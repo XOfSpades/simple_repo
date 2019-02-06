@@ -654,11 +654,16 @@ defmodule SimpleRepo.QueryTest do
     end
 
     test "finds entities with IN operator", %{structs: structs} do
-      results = TestStruct
+      results1 = TestStruct
       |> Query.scoped([{:jsonb, {:json, {"foo", ["bar", "bam"]}}}])
       |> Repo.all()
+      |> Enum.map(fn(x) ->
+        Map.take(x, [:name, :type, :value, :f_value, :jsonb])
+      end)
 
-      result_data = results
+      results2 = TestStruct
+      |> Query.scoped([{:jsonb, {:json, {"foo", ["bar", "bam"]}}}])
+      |> Repo.all()
       |> Enum.map(fn(x) ->
         Map.take(x, [:name, :type, :value, :f_value, :jsonb])
       end)
@@ -673,8 +678,9 @@ defmodule SimpleRepo.QueryTest do
         Map.take(x, [:name, :type, :value, :f_value, :jsonb])
       end)
 
-      assert length(results) == 3
-      assert MapSet.new(result_data) == MapSet.new(expected)
+      assert length(results1) == 3
+      assert MapSet.new(results1) == MapSet.new(results2)
+      assert MapSet.new(results1) == MapSet.new(expected)
     end
 
     test "finds entities with NOT IN operator", %{structs: structs} do

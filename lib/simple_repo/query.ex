@@ -149,6 +149,10 @@ defmodule SimpleRepo.Query do
   end
   defp scope_query(queriable, {key, {:json, {path, values}}})
        when is_list(path) and is_list(values) do
+    scope_query(queriable, {key, {:json, {path, :in, values}}})
+  end
+  defp scope_query(queriable, {key, {:json, {path, :in, values}}})
+      when is_list(path) and is_list(values) do
     str_path = Enum.map(path, &to_str/1)
     str_values = Enum.map(values, &to_str/1)
     from m in queriable,
