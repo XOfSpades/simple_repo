@@ -47,6 +47,7 @@ defmodule SimpleRepo.Mixfile do
     [
       {:ecto, "~> 3.0 or ~> 2.1"},
       {:ecto_sql, "~> 3.0", only: :test},
+      {:jason, "~> 1.1", only: :test},
       {:postgrex, "~> 0.14", only: :test},
       {:excoveralls, "~> 0.7.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev}

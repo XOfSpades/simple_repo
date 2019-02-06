@@ -8,6 +8,7 @@ defmodule SimpleRepo.Support.Repo.Migrations.CreateTestStructTable do
       add :value,     :integer
       add :f_value,   :float
       add :some_time, :naive_datetime
+      add :jsonb,     :map
 
       timestamps()
     end

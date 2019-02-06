@@ -101,4 +101,84 @@ defmodule SimpleRepo.Query do
   defp scope_query(queriable, {key, {:>=, value}}) do
     queriable |> where([m], field(m, ^key) >= ^value)
   end
+  defp scope_query(queriable, {key, {:json, {path, value}}})
+       when not is_list(path) do
+    scope_query(queriable, {key, {:json, {[path], value}}})
+  end
+  defp scope_query(queriable, {key, {:json, {path, value}}})
+       when is_list(path) and not is_list(value) do
+    str_path = Enum.map(path, &to_str/1)
+    from m in queriable, where: fragment(
+      "? #>> ? = ?", field(m, ^key), ^str_path, ^map_value(value))
+  end
+  defp scope_query(queriable, {key, {:json, {path, :>, value}}})
+       when is_list(path) and is_binary(value) do
+    str_path = Enum.map(path, &to_str/1)
+    from m in queriable, where: fragment(
+      "? #>> ? > ?", field(m, ^key), ^str_path, ^value)
+  end
+  defp scope_query(queriable, {key, {:json, {path, :<, value}}})
+       when is_list(path) and is_binary(value) do
+    str_path = Enum.map(path, &to_str/1)
+    from m in queriable, where: fragment(
+      "? #>> ? < ?", field(m, ^key), ^str_path, ^value)
+  end
+  defp scope_query(queriable, {key, {:json, {path, :>=, value}}})
+       when is_list(path) and is_binary(value) do
+    str_path = Enum.map(path, &to_str/1)
+    from m in queriable, where: fragment(
+      "? #>> ? >= ?", field(m, ^key), ^str_path, ^value)
+  end
+  defp scope_query(queriable, {key, {:json, {path, :<=, value}}})
+       when is_list(path) and is_binary(value) do
+    str_path = Enum.map(path, &to_str/1)
+    from m in queriable, where: fragment(
+      "? #>> ? <= ?", field(m, ^key), ^str_path, ^value)
+  end
+  defp scope_query(queriable, {key, {:json, {path, :like, value}}})
+       when is_list(path) and is_binary(value) do
+    str_path = Enum.map(path, &to_str/1)
+    from m in queriable, where: fragment(
+      "? #>> ? LIKE ?", field(m, ^key), ^str_path, ^value)
+  end
+  defp scope_query(queriable, {key, {:json, {path, :not_like, value}}})
+       when is_list(path) and is_binary(value) do
+    str_path = Enum.map(path, &to_str/1)
+    from m in queriable, where: fragment(
+      "? #>> ? NOT LIKE ?", field(m, ^key), ^str_path, ^value)
+  end
+  defp scope_query(queriable, {key, {:json, {path, values}}})
+       when is_list(path) and is_list(values) do
+    scope_query(queriable, {key, {:json, {path, :in, values}}})
+  end
+  defp scope_query(queriable, {key, {:json, {path, :in, values}}})
+      when is_list(path) and is_list(values) do
+    str_path = Enum.map(path, &to_str/1)
+    str_values = Enum.map(values, &to_str/1)
+    from m in queriable,
+      where: fragment("? #>> ?", field(m, ^key), ^str_path) in ^str_values
+  end
+  defp scope_query(queriable, {key, {:json, {path, :not_in, values}}})
+       when is_list(path) and is_list(values) do
+    str_path = Enum.map(path, &to_str/1)
+    str_values = Enum.map(values, &to_str/1)
+    from m in queriable,
+      where: fragment("? #>> ?", field(m, ^key), ^str_path) not in ^str_values
+  end
+  defp scope_query(queriable, {key, {:json, {path, operator, value}}})
+       when not is_list(path) do
+    scope_query(queriable, {key, {:json, {[path], operator, value}}})
+  end
+  defp scope_query(queriable, {key, {:json, {path, operator, value}}})
+       when not is_binary(value) do
+    scope_query(queriable, {key, {:json, {path, operator, map_value(value)}}})
+  end
+
+  defp to_str(key) when is_binary(key), do: key
+  defp to_str(key) when is_atom(key), do: Atom.to_string(key)
+  defp to_str(key), do: "#{inspect key}"
+
+  defp map_value(true), do: "true"
+  defp map_value(false), do: "false"
+  defp map_value(value), do: to_str(value)
 end

@@ -144,6 +144,36 @@ SimpleRepo.Query.ordered(MyApp.User, last_name: :asc, first_name: :asc)
 
 ```
 
+## Queries agains jsonb content
+
+SimpleRepo.Query (and thus also SimpleRepo.Scoped) support also queries agains a jsonb content (e.g. in Postgres). The functionality is tested with Postgres 9.6.4 and should work for later versions as well. Such queries can be achieved as follows (Further query opportunities might follow).
+
+```
+SimpleRepo.Query.scoped(MyApp.User, [misc: {:jsonb, {"user_group"}, "C"}])
+# returns all user having a key "user_group" in the jsonb content "misc" with value "C".
+
+SimpleRepo.Query.scoped(MyApp.User, [misc: {:jsonb, {"user_group"}, ["B", "C"]}])
+# Again this is a query for a list inclusion
+
+SimpleRepo.Query.scoped(MyApp.User, [misc: {:jsonb, {"user_group"}, :in, ["B", "C"]}])
+# This was syntactic sugar for an explicit query with the :in key
+
+SimpleRepo.Query.scoped(MyApp.User, [misc: {:jsonb, {"user_group"}, :not_in, ["B", "C"]}])
+# Or a query for a list exclusion
+
+SimpleRepo.Query.scoped(MyApp.User, [misc: {:jsonb, {"group", "music"}, ["B", "C"]}])
+# In case a json content is nested one can give the path as a list.
+
+SimpleRepo.Query.scoped(MyApp.User, [misc: {:jsonb, {"points", percetage}, :>, 80}])
+# The compare operators :>, :<, :>= and :<= are supported as well.
+
+SimpleRepo.Query.scoped(MyApp.User, [misc: {:jsonb, {"position"}, :like, "%deviceloper%"}])
+# Also pattern matching via like query or exclusion with :not_like are possible
+
+
+
+```
+
 **TODOs:**
  - Bulk save made simple
  - Extend possibilities to query and scope

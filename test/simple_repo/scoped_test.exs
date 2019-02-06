@@ -54,7 +54,7 @@ defmodule SimpleRepo.RepositoryTest do
     test "updates all items in scopes and returns them", %{structs: structs} do
       items = Enum.filter(structs, &(&1.type == "foo"))
       {count, updated_items} = Repo.update_all_scoped(
-        TestStruct, [set: [type: "yay"]], [type: "foo"], returning: true
+        from(ts in TestStruct, select: ts), [set: [type: "yay"]], [type: "foo"]
       )
 
       assert count == length(items)
