@@ -5,6 +5,7 @@ defmodule SimpleRepo.Support.TestStruct do
   use Ecto.Schema
 
   schema "test_structs" do
+    field :uuid,      :binary_id
     field :name,      :string
     field :type,      :string
     field :value,     :integer
@@ -16,7 +17,7 @@ defmodule SimpleRepo.Support.TestStruct do
   end
 
   def changeset(model, params \\ %{}) do
-    fields = ~w(name type value f_value some_time jsonb)a
+    fields = ~w(uuid name type value f_value some_time jsonb)a
 
     model
     |> Ecto.Changeset.cast(params, fields)

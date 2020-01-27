@@ -3,6 +3,7 @@ defmodule SimpleRepo.Support.Repo.Migrations.CreateTestStructTable do
 
   def change do
     create table(:test_structs) do
+      add :uuid,      :binary_id, null: false
       add :name,      :string, size: 30, null: false
       add :type,      :string, size: 10, null: false
       add :value,     :integer

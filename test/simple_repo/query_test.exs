@@ -220,6 +220,27 @@ defmodule SimpleRepo.QueryTest do
       end
     end
 
+    test "scopes to items included in a list when it is binary type", %{structs: structs} do
+      [_, _, _ | expected] = Enum.shuffle(structs)
+      uuids = Enum.map(expected, fn s -> s.uuid end)
+
+      results = TestStruct
+      |> Query.scoped([uuid: uuids])
+      |> Repo.all
+
+      assert length(results) == length(expected)
+
+      struct_data = expected
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      result_data = results
+      |> Enum.map(fn(x) -> Map.take(x, [:name, :type, :value, :f_value]) end)
+
+      for expected <- struct_data do
+        assert Enum.member?(result_data, expected)
+      end
+    end
+
     test "scopes to items not included in a list", %{structs: structs} do
       results = TestStruct
       |> Query.scoped([type: {:not, ["foo", "bar"]}])
